@@ -2,13 +2,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { extract } from '@app/core';
-import { ColaboratorComponent } from './colaborator.component';
+import { CandidateComponent } from './candidate.component';
 import { Shell } from '@app/shell/shell.service';
 
 const routes: Routes = [
   Shell.childRoutes([
-    { path: '', redirectTo: '/colaborador', pathMatch: 'full' },
-    { path: 'colaborador', component: ColaboratorComponent, data: { title: extract('Colaborador') } }
+    { path: '', redirectTo: '/candidato', pathMatch: 'full' },
+    { path: 'candidato', component: CandidateComponent, data: { title: extract('Candidato') } }
   ])
 ];
 
@@ -17,4 +17,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: []
 })
-export class ColaboratorRoutingModule {}
+export class CandidateRoutingModule {}

@@ -16,6 +16,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CandidateModule } from './candidate/candidate.module';
 
 @NgModule({
   imports: [
@@ -30,6 +31,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     SharedModule,
     ShellModule,
     ColaboratorModule,
+    CandidateModule,
     LoginModule,
     AppRoutingModule // must be imported as the last module as it contains the fallback route
   ],
