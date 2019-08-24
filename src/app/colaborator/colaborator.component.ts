@@ -10,11 +10,11 @@ export interface PeriodicElement {
 }
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-colaborator',
+  templateUrl: './colaborator.component.html',
+  styleUrls: ['./colaborator.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class ColaboratorComponent implements OnInit {
   personForm: FormGroup;
 
   titleForm: string;

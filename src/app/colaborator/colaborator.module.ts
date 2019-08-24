@@ -4,8 +4,8 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
-import { HomeRoutingModule } from './home-routing.module';
-import { HomeComponent } from './home.component';
+import { ColaboratorRoutingModule } from './colaborator-routing.module';
+import { ColaboratorComponent } from './colaborator.component';
 import { MaterialModule } from '@app/shared/material/material-components.module';
 
 import { NgxSmartModalModule } from 'ngx-smart-modal';
@@ -21,8 +21,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     SharedModule,
     MaterialModule,
     NgxSmartModalModule.forRoot(),
-    HomeRoutingModule
+    ColaboratorRoutingModule
   ],
-  declarations: [HomeComponent]
+  declarations: [ColaboratorComponent]
 })
-export class HomeModule {}
+export class ColaboratorModule {}
