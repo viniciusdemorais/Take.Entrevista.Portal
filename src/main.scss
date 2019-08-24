@@ -13,7 +13,11 @@
 @import "~@fortawesome/fontawesome-free/scss/regular.scss";
 @import "~@fortawesome/fontawesome-free/scss/solid.scss";
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-@import "~ngx-smart-modal/ngx-smart-modal";
 
 // Theme customization
 @import "theme/theme";
+
+.cdk-global-overlay-wrapper,
+.cdk-overlay-container {
+  z-index: 99999 !important;
+}

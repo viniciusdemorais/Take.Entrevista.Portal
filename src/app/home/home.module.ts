@@ -9,12 +9,20 @@ import { HomeComponent } from './home.component';
 import { MaterialModule } from '@app/shared/material/material-components.module';
 
 import { NgxSmartModalModule } from 'ngx-smart-modal';
-
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  imports: [CommonModule, TranslateModule, CoreModule, SharedModule, MaterialModule,
-    NgxSmartModalModule.forRoot(), HomeRoutingModule],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    FormsModule,
+    ReactiveFormsModule,
+    CoreModule,
+    SharedModule,
+    MaterialModule,
+    NgxSmartModalModule.forRoot(),
+    HomeRoutingModule
+  ],
   declarations: [HomeComponent]
 })
-export class HomeModule { }
+export class HomeModule {}

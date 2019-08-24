@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgxSmartModalService } from 'ngx-smart-modal';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 export interface PeriodicElement {
   name: string;
@@ -14,6 +15,12 @@ export interface PeriodicElement {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  personForm: FormGroup;
+
+  titleForm: string;
+  textForm: string;
+  textBtnForm: string;
+
   displayedColumns = ['name', 'position', 'weight', 'symbol', 'position', 'weight', 'symbol', 'actions'];
 
   dataSource: PeriodicElement[] = [
@@ -29,11 +36,27 @@ export class HomeComponent implements OnInit {
     { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' }
   ];
 
-  constructor(public ngxSmartModalService: NgxSmartModalService) { }
+  constructor(private formBuilder: FormBuilder, public ngxSmartModalService: NgxSmartModalService) {
+    this.createForm();
+  }
 
-  ngOnInit() { }
+  ngOnInit() {}
+
+  createForm() {
+    this.personForm = this.formBuilder.group({
+      nome: ['', Validators.required],
+      email: ['', Validators.required]
+    });
+  }
 
   openDialog() {
+    this.ngxSmartModalService.getModal('myModal').open();
+  }
+
+  addPerson() {
+    this.titleForm = 'Adicionar Take.Ser';
+    this.textForm = 'Cadastre os possíveis Take.Seres que podem ser participantes da entrevista.';
+    this.textBtnForm = 'Salvar';
     this.ngxSmartModalService.getModal('myModal').open();
   }
 }
