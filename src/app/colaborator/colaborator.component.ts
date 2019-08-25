@@ -72,7 +72,9 @@ export class ColaboratorComponent implements OnInit, OnDestroy {
   }
 
   getNameArea(id: number): string {
-    return this.areas.find(a => a.idArea === id).nome;
+    if (this.areas.length > 0) {
+      return this.areas.find(a => a.idArea === id).nome;
+    }
   }
 
   getCidades() {
@@ -94,7 +96,9 @@ export class ColaboratorComponent implements OnInit, OnDestroy {
   }
 
   getNameCidade(id: number): string {
-    return this.cidades.find(c => c.idCidade === id).nome;
+    if (this.cidades.length > 0) {
+      return this.cidades.find(c => c.idCidade === id).nome;
+    }
   }
 
   getColaboradores() {
@@ -178,5 +182,23 @@ export class ColaboratorComponent implements OnInit, OnDestroy {
     const data: Colaborador = this.colaboradores.find(c => c.idColaborador === id);
     this.fillForm(data);
     this.ngxSmartModalService.getModal('myModal').open();
+  }
+
+  deleteColaborador(id: number) {
+    this.loadingColaborador = true;
+    this.colaboradorService
+      .deleteColaborador(id)
+      .pipe(
+        takeUntil(this.unsub),
+        finalize(() => {
+          this.loadingColaborador = false;
+        })
+      )
+      .subscribe(
+        res => {
+          this.getColaboradores();
+        },
+        err => {}
+      );
   }
 }
