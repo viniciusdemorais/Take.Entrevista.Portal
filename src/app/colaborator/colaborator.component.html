@@ -29,23 +29,23 @@
           <!-- Weight Column -->
           <ng-container matColumnDef="area">
             <th mat-header-cell *matHeaderCellDef>Área</th>
-            <td mat-cell *matCellDef="let element">{{ element.idArea }}</td>
+            <td mat-cell *matCellDef="let element">{{ getNameArea(element.idArea) }}</td>
           </ng-container>
 
           <!-- Symbol Column -->
           <ng-container matColumnDef="cidade">
             <th mat-header-cell *matHeaderCellDef>Cidade</th>
-            <td mat-cell *matCellDef="let element">{{ element.idCidade }}</td>
+            <td mat-cell *matCellDef="let element">{{ getNameCidade(element.idCidade) }}</td>
           </ng-container>
 
           <!-- Actions Column -->
           <ng-container matColumnDef="actions" stickyEnd>
             <th mat-header-cell *matHeaderCellDef></th>
             <td mat-cell *matCellDef="let element">
-              <button mat-icon-button color="primary" (click)="openDialog()">
+              <button mat-icon-button color="primary" (click)="editColaborador(element.idColaborador)">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button color="warn" (click)="openDialog()">
+              <button mat-icon-button color="warn">
                 <mat-icon>delete</mat-icon>
               </button>
             </td>
@@ -65,36 +65,33 @@
     <div mat-dialog-content>
       <p>{{ textForm }}</p>
       <mat-form-field class="col-md-6">
-        <input matInput placeholder="Nome" formControlName="nome" required />
+        <input matInput placeholder="Nome" id="nome" formControlName="nome" required />
       </mat-form-field>
       <mat-form-field class="col-md-6">
-        <input matInput placeholder="Email" formControlName="email" required />
+        <input matInput placeholder="Email" id="email" formControlName="email" required />
       </mat-form-field>
       <mat-form-field class="col-md-6">
         <mat-select formControlName="idArea" required>
-          <mat-option value="1">Dev</mat-option>
-          <mat-option value="2">Marketing</mat-option>
-          <mat-option value="3">Rh</mat-option>
+          <mat-option *ngFor="let area of areas" [value]="area.idArea">{{ area.nome }}</mat-option>
         </mat-select>
         <mat-label> <mat-icon>emoji_objects</mat-icon> Área</mat-label>
       </mat-form-field>
       <mat-form-field class="col-md-6">
         <mat-select formControlName="idCidade" required>
-          <mat-option value="1">BH</mat-option>
-          <mat-option value="2">SP</mat-option>
+          <mat-option *ngFor="let cidade of cidades" [value]="cidade.idCidade">{{ cidade.nome }}</mat-option>
         </mat-select>
         <mat-label> <mat-icon>location_city</mat-icon> Cidade</mat-label>
       </mat-form-field>
       <mat-form-field class="col-md-6">
-        <input matInput placeholder="WorkChatId" formControlName="workChatId" required />
+        <input matInput placeholder="WorkChatId" id="workChatId" formControlName="workChatId" required />
       </mat-form-field>
     </div>
 
     <div mat-dialog-actions>
-      <button mat-raised-button class="float-right ml-3" (click)="myModal.close()" color="primary">
-        {{ textBtnForm }}
+      <button mat-raised-button class="float-right ml-3" (click)="saveColaborador()" color="primary">
+        Salvar
       </button>
-      <button mat-raised-button class="float-right" (click)="myModal.close()">Fechar</button>
+      <button mat-raised-button class="float-right" (click)="resetForm(); myModal.close()">Fechar</button>
     </div>
   </form>
 </ngx-smart-modal>

@@ -25,7 +25,6 @@ export class ColaboratorComponent implements OnInit, OnDestroy {
 
   titleForm: string;
   textForm: string;
-  textBtnForm: string;
 
   displayedColumns = ['nome', 'email', 'area', 'cidade', 'actions'];
 
@@ -72,6 +71,10 @@ export class ColaboratorComponent implements OnInit, OnDestroy {
       );
   }
 
+  getNameArea(id: number): string {
+    return this.areas.find(a => a.idArea === id).nome;
+  }
+
   getCidades() {
     this.loadingCidade = true;
     this.cidadeService
@@ -88,6 +91,10 @@ export class ColaboratorComponent implements OnInit, OnDestroy {
         },
         err => {}
       );
+  }
+
+  getNameCidade(id: number): string {
+    return this.cidades.find(c => c.idCidade === id).nome;
   }
 
   getColaboradores() {
@@ -110,23 +117,66 @@ export class ColaboratorComponent implements OnInit, OnDestroy {
 
   createForm() {
     this.personForm = this.formBuilder.group({
-      idColaborador: [null],
+      idColaborador: [0, Validators.required],
+      idCidade: [null, Validators.required],
+      idArea: [null, Validators.required],
       nome: [null, Validators.required],
       email: [null, Validators.required],
-      idArea: [null, Validators.required],
-      idCidade: [null, Validators.required],
       workChatId: [null, Validators.required]
     });
   }
 
-  openDialog() {
-    this.ngxSmartModalService.getModal('myModal').open();
+  resetForm() {
+    this.personForm.reset();
+    Object.keys(this.personForm.controls).forEach(key => {
+      this.personForm.controls[key].setErrors(null);
+    });
+  }
+
+  fillForm(data: Colaborador) {
+    Object.keys(this.personForm.controls).forEach(key => {
+      if (this.personForm.controls[key]) {
+        this.personForm.controls[key].patchValue(data[key]);
+      }
+    });
+  }
+
+  saveColaborador() {
+    if (this.personForm.invalid) {
+    } else {
+      const data: Colaborador = this.personForm.value;
+      this.loadingColaborador = true;
+      this.colaboradorService
+        .saveColaborador(data)
+        .pipe(
+          takeUntil(this.unsub),
+          finalize(() => {
+            this.loadingColaborador = false;
+          })
+        )
+        .subscribe(
+          res => {
+            this.resetForm();
+            this.ngxSmartModalService.getModal('myModal').close();
+            this.getColaboradores();
+          },
+          err => {}
+        );
+    }
   }
 
   addPerson() {
+    this.personForm.controls.idColaborador.patchValue(0);
     this.titleForm = 'Adicionar Take.Ser';
     this.textForm = 'Cadastre os possíveis Take.Seres que podem ser participantes da entrevista.';
-    this.textBtnForm = 'Salvar';
+    this.ngxSmartModalService.getModal('myModal').open();
+  }
+
+  editColaborador(id: number) {
+    this.titleForm = 'Editar Take.Ser';
+    this.textForm = 'Edite o Take.Ser que pode ser participante da entrevista.';
+    const data: Colaborador = this.colaboradores.find(c => c.idColaborador === id);
+    this.fillForm(data);
     this.ngxSmartModalService.getModal('myModal').open();
   }
 }

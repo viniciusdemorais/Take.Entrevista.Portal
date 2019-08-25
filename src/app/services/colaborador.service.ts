@@ -11,4 +11,8 @@ export class ColaboradorService {
   retrieveColaboradores(): Observable<any> {
     return this.http.request<any>('get', `Colaborador`).pipe(map(resp => resp));
   }
+
+  saveColaborador(data: Colaborador): Observable<any> {
+    return this.http.request<any>('post', `Colaborador`, { body: data }).pipe(map(resp => resp));
+  }
 }
