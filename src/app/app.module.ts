@@ -17,6 +17,9 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CandidateModule } from './candidate/candidate.module';
+import { AreaService } from './services/area.service';
+import { ColaboradorService } from './services/colaborador.service';
+import { CidadeService } from './services/cidade.service';
 
 @NgModule({
   imports: [
@@ -36,7 +39,7 @@ import { CandidateModule } from './candidate/candidate.module';
     AppRoutingModule // must be imported as the last module as it contains the fallback route
   ],
   declarations: [AppComponent],
-  providers: [],
+  providers: [AreaService, CidadeService, ColaboradorService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

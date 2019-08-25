@@ -1,0 +1,14 @@
+import { map } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Colaborador } from '@app/models/Colaborador';
+
+@Injectable()
+export class ColaboradorService {
+  constructor(private http: HttpClient) {}
+
+  retrieveColaboradores(): Observable<any> {
+    return this.http.request<any>('get', `Colaborador`).pipe(map(resp => resp));
+  }
+}

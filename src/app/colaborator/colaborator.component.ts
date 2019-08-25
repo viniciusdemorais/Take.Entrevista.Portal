@@ -1,51 +1,121 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgxSmartModalService } from 'ngx-smart-modal';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
+import { Colaborador } from '@app/models/Colaborador';
+import { AreaService } from '@app/services/area.service';
+import { Area } from '@app/models/Area';
+import { Subject } from 'rxjs';
+import { takeUntil, finalize } from 'rxjs/operators';
+import { CidadeService } from '@app/services/cidade.service';
+import { Cidade } from '@app/models/Cidade';
+import { ColaboradorService } from '@app/services/colaborador.service';
 
 @Component({
   selector: 'app-colaborator',
   templateUrl: './colaborator.component.html',
   styleUrls: ['./colaborator.component.scss']
 })
-export class ColaboratorComponent implements OnInit {
+export class ColaboratorComponent implements OnInit, OnDestroy {
+  unsub = new Subject();
   personForm: FormGroup;
+
+  loadingArea = false;
+  loadingCidade = false;
+  loadingColaborador = false;
 
   titleForm: string;
   textForm: string;
   textBtnForm: string;
 
-  displayedColumns = ['name', 'position', 'weight', 'symbol', 'position', 'weight', 'symbol', 'actions'];
+  displayedColumns = ['nome', 'email', 'area', 'cidade', 'actions'];
 
-  dataSource: PeriodicElement[] = [
-    { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-    { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-    { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-    { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-    { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-    { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-    { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-    { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-    { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-    { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' }
-  ];
+  areas: Area[] = [];
+  cidades: Cidade[] = [];
+  colaboradores: Colaborador[] = [];
 
-  constructor(private formBuilder: FormBuilder, public ngxSmartModalService: NgxSmartModalService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private ngxSmartModalService: NgxSmartModalService,
+    private areaService: AreaService,
+    private cidadeService: CidadeService,
+    private colaboradorService: ColaboradorService
+  ) {
     this.createForm();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getAreas();
+    this.getCidades();
+    this.getColaboradores();
+  }
+
+  ngOnDestroy() {
+    this.unsub.next();
+    this.unsub.unsubscribe();
+  }
+
+  getAreas() {
+    this.loadingArea = true;
+    this.areaService
+      .retrieveAreas()
+      .pipe(
+        takeUntil(this.unsub),
+        finalize(() => {
+          this.loadingArea = false;
+        })
+      )
+      .subscribe(
+        res => {
+          this.areas = res.list;
+        },
+        err => {}
+      );
+  }
+
+  getCidades() {
+    this.loadingCidade = true;
+    this.cidadeService
+      .retrieveCidades()
+      .pipe(
+        takeUntil(this.unsub),
+        finalize(() => {
+          this.loadingCidade = false;
+        })
+      )
+      .subscribe(
+        res => {
+          this.cidades = res.list;
+        },
+        err => {}
+      );
+  }
+
+  getColaboradores() {
+    this.loadingColaborador = true;
+    this.colaboradorService
+      .retrieveColaboradores()
+      .pipe(
+        takeUntil(this.unsub),
+        finalize(() => {
+          this.loadingColaborador = false;
+        })
+      )
+      .subscribe(
+        res => {
+          this.colaboradores = res.list;
+        },
+        err => {}
+      );
+  }
 
   createForm() {
     this.personForm = this.formBuilder.group({
-      nome: ['', Validators.required],
-      email: ['', Validators.required]
+      idColaborador: [null],
+      nome: [null, Validators.required],
+      email: [null, Validators.required],
+      idArea: [null, Validators.required],
+      idCidade: [null, Validators.required],
+      workChatId: [null, Validators.required]
     });
   }
 
