@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material';
 import {
   MatSidenavModule,
   MatListModule,
@@ -41,9 +42,19 @@ const modules = [
   MatToolbarModule
 ];
 
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'MM/DD/YYYY'
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY'
+  }
+};
+
 @NgModule({
   imports: [modules],
   exports: [modules],
-  declarations: []
+  declarations: [],
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }, { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS }]
 })
 export class MaterialModule {}

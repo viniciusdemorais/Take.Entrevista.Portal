@@ -1,6 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgxSmartModalService } from 'ngx-smart-modal';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { Area } from '@app/models/Area';
+import { Cidade } from '@app/models/Cidade';
+import { AreaService } from '@app/services/area.service';
+import { Candidato } from '@app/models/Candidato';
+import { CidadeService } from '@app/services/cidade.service';
+import { CandidatoService } from '@app/services/candidato.service';
+import { takeUntil, finalize } from 'rxjs/operators';
+import { formatDate } from '@angular/common';
 
 export interface PeriodicElement {
   name: string;
@@ -14,49 +23,193 @@ export interface PeriodicElement {
   templateUrl: './candidate.component.html',
   styleUrls: ['./candidate.component.scss']
 })
-export class CandidateComponent implements OnInit {
-  personForm: FormGroup;
+export class CandidateComponent implements OnInit, OnDestroy {
+  unsub = new Subject();
+  candidateForm: FormGroup;
+
+  loadingArea = false;
+  loadingCidade = false;
+  loadingCandidato = false;
 
   titleForm: string;
   textForm: string;
-  textBtnForm: string;
 
-  displayedColumns = ['name', 'position', 'weight', 'symbol', 'position', 'weight', 'symbol', 'actions'];
+  displayedColumns = ['nome', 'area', 'cidade', 'actions'];
 
-  dataSource: PeriodicElement[] = [
-    { position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-    { position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-    { position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-    { position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-    { position: 5, name: 'Boron', weight: 10.811, symbol: 'B' },
-    { position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C' },
-    { position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N' },
-    { position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O' },
-    { position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F' },
-    { position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne' }
-  ];
+  areas: Area[] = [];
+  cidades: Cidade[] = [];
+  candidatos: Candidato[] = [];
 
-  constructor(private formBuilder: FormBuilder, public ngxSmartModalService: NgxSmartModalService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private ngxSmartModalService: NgxSmartModalService,
+    private areaService: AreaService,
+    private cidadeService: CidadeService,
+    private candidatoService: CandidatoService
+  ) {
     this.createForm();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getAreas();
+    this.getCidades();
+    this.getCandidatos();
+  }
+
+  ngOnDestroy() {
+    this.unsub.next();
+    this.unsub.unsubscribe();
+  }
+
+  getAreas() {
+    this.loadingArea = true;
+    this.areaService
+      .retrieveAreas()
+      .pipe(
+        takeUntil(this.unsub),
+        finalize(() => {
+          this.loadingArea = false;
+        })
+      )
+      .subscribe(
+        res => {
+          this.areas = res.list;
+        },
+        err => {}
+      );
+  }
+
+  getNameArea(id: number): string {
+    if (this.areas.length > 0) {
+      return this.areas.find(a => a.idArea === id).nome;
+    }
+  }
+
+  getCidades() {
+    this.loadingCidade = true;
+    this.cidadeService
+      .retrieveCidades()
+      .pipe(
+        takeUntil(this.unsub),
+        finalize(() => {
+          this.loadingCidade = false;
+        })
+      )
+      .subscribe(
+        res => {
+          this.cidades = res.list;
+        },
+        err => {}
+      );
+  }
+
+  getNameCidade(id: number): string {
+    if (this.cidades.length > 0) {
+      return this.cidades.find(c => c.idCidade === id).nome;
+    }
+  }
+
+  getCandidatos() {
+    this.loadingCandidato = true;
+    this.candidatoService
+      .retrieveCandidatos()
+      .pipe(
+        takeUntil(this.unsub),
+        finalize(() => {
+          this.loadingCandidato = false;
+        })
+      )
+      .subscribe(
+        res => {
+          this.candidatos = res.list;
+        },
+        err => {}
+      );
+  }
 
   createForm() {
-    this.personForm = this.formBuilder.group({
-      nome: ['', Validators.required],
-      email: ['', Validators.required]
+    this.candidateForm = this.formBuilder.group({
+      idCandidato: [0, Validators.required],
+      idCidade: [null, Validators.required],
+      idArea: [null, Validators.required],
+      nome: [null, Validators.required],
+      dataEntrevista: [null, Validators.required]
     });
   }
 
-  openDialog() {
+  resetForm() {
+    this.candidateForm.reset();
+    Object.keys(this.candidateForm.controls).forEach(key => {
+      this.candidateForm.controls[key].setErrors(null);
+    });
+  }
+
+  fillForm(data: Candidato) {
+    Object.keys(this.candidateForm.controls).forEach(key => {
+      if (this.candidateForm.controls[key]) {
+        if (key === 'dataEntrevista') {
+          this.candidateForm.controls[key].patchValue(formatDate(data[key], 'yyyy-MM-dd', 'pt-BR'));
+        } else {
+          this.candidateForm.controls[key].patchValue(data[key]);
+        }
+      }
+    });
+  }
+
+  saveCandidato() {
+    if (this.candidateForm.invalid) {
+    } else {
+      const data: Candidato = this.candidateForm.value;
+      this.loadingCandidato = true;
+      this.candidatoService
+        .saveCandidato(data)
+        .pipe(
+          takeUntil(this.unsub),
+          finalize(() => {
+            this.loadingCandidato = false;
+          })
+        )
+        .subscribe(
+          res => {
+            this.resetForm();
+            this.ngxSmartModalService.getModal('myModal').close();
+            this.getCandidatos();
+          },
+          err => {}
+        );
+    }
+  }
+
+  addCandidate() {
+    this.candidateForm.controls.idCandidato.patchValue(0);
+    this.titleForm = 'Adicionar Candidato';
+    this.textForm = 'Cadastre os candidatos que irão participar da entrevista.';
     this.ngxSmartModalService.getModal('myModal').open();
   }
 
-  addPerson() {
-    this.titleForm = 'Adicionar Take.Ser';
-    this.textForm = 'Cadastre os possíveis Take.Seres que podem ser participantes da entrevista.';
-    this.textBtnForm = 'Salvar';
+  editCandidato(id: number) {
+    this.titleForm = 'Editar Candidato';
+    this.textForm = 'Edite o Candidato que irá participar da entrevista.';
+    const data: Candidato = this.candidatos.find(c => c.idCandidato === id);
+    this.fillForm(data);
     this.ngxSmartModalService.getModal('myModal').open();
+  }
+
+  deleteCandidato(id: number) {
+    this.loadingCandidato = true;
+    this.candidatoService
+      .deleteCandidato(id)
+      .pipe(
+        takeUntil(this.unsub),
+        finalize(() => {
+          this.loadingCandidato = false;
+        })
+      )
+      .subscribe(
+        res => {
+          this.getCandidatos();
+        },
+        err => {}
+      );
   }
 }

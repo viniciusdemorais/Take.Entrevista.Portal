@@ -61,7 +61,7 @@
 
 <ngx-smart-modal #myModal identifier="myModal" customClass="msg-modal">
   <h1 mat-dialog-title>{{ titleForm }}</h1>
-  <form [formGroup]="personForm">
+  <form [formGroup]="personForm" (ngSubmit)="saveColaborador()">
     <div mat-dialog-content>
       <p>{{ textForm }}</p>
       <mat-form-field class="col-md-6">
@@ -88,7 +88,7 @@
     </div>
 
     <div mat-dialog-actions>
-      <button mat-raised-button class="float-right ml-3" (click)="saveColaborador()" color="primary">
+      <button mat-raised-button class="float-right ml-3" color="primary">
         Salvar
       </button>
       <button mat-raised-button class="float-right" (click)="resetForm(); myModal.close()">Fechar</button>
