@@ -22,6 +22,12 @@ import { ColaboradorService } from './services/colaborador.service';
 import { CidadeService } from './services/cidade.service';
 import { CandidatoService } from './services/candidato.service';
 
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
+
+registerLocaleData(localePt);
+
 @NgModule({
   imports: [
     BrowserAnimationsModule,
@@ -40,7 +46,13 @@ import { CandidatoService } from './services/candidato.service';
     AppRoutingModule // must be imported as the last module as it contains the fallback route
   ],
   declarations: [AppComponent],
-  providers: [AreaService, CidadeService, ColaboradorService, CandidatoService],
+  providers: [
+    AreaService,
+    CidadeService,
+    ColaboradorService,
+    CandidatoService,
+    { provide: LOCALE_ID, useValue: 'pt-BR' }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
