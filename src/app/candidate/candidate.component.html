@@ -7,10 +7,15 @@
     </p>
   </div>
 
+  <app-page-loader *ngIf="loadingCandidato || loadingAgendamento"></app-page-loader>
+
   <div class="row mt-4">
     <div class="col-md-12">
       <button mat-raised-button class="mb-3" color="primary" (click)="addCandidate()">
         <mat-icon class="mr-2">person_add</mat-icon> Adicionar
+      </button>
+      <button mat-raised-button class="mb-3 ml-3" color="primary" (click)="addSchedule()">
+        <mat-icon class="mr-2">dashboard</mat-icon> Marcar Entrevista
       </button>
       <div class="table-responsive mat-elevation-z8">
         <table mat-table [dataSource]="candidatos">
@@ -50,7 +55,14 @@
   </div>
 </div>
 
-<ngx-smart-modal #myModal identifier="myModal" customClass="msg-modal" [escapable]="false" [dismissable]="false">
+<ngx-smart-modal
+  #myModal
+  identifier="myModal"
+  customClass="msg-modal"
+  [escapable]="false"
+  [dismissable]="false"
+  [closable]="false"
+>
   <h1 mat-dialog-title>{{ titleForm }}</h1>
   <form [formGroup]="candidateForm">
     <div mat-dialog-content>
@@ -73,6 +85,10 @@
       <mat-form-field class="col-md-6">
         <input matInput type="date" placeholder="Data da Entrevista" formControlName="dataEntrevista" />
       </mat-form-field>
+      <mat-form-field class="col-md-6">
+        <input matInput type="text" [textMask]="{ mask: hourMask }" formControlName="horario" />
+        <mat-label> <mat-icon>access_time</mat-icon> Horário</mat-label>
+      </mat-form-field>
     </div>
 
     <div mat-dialog-actions>
@@ -80,6 +96,41 @@
         Salvar
       </button>
       <button mat-raised-button class="float-right" (click)="resetForm(); myModal.close()">Fechar</button>
+    </div>
+  </form>
+</ngx-smart-modal>
+
+<ngx-smart-modal
+  #schedulingModal
+  identifier="schedulingModal"
+  customClass="msg-modal"
+  [escapable]="false"
+  [dismissable]="false"
+  [closable]="false"
+>
+  <h1 mat-dialog-title>{{ titleForm }}</h1>
+  <form [formGroup]="schedulingForm">
+    <div mat-dialog-content>
+      <p>{{ textForm }}</p>
+      <mat-form-field class="col-md-6">
+        <mat-select formControlName="idCandidato" id="idCandidato" required>
+          <mat-option *ngFor="let candidato of candidatos" [value]="candidato.idCandidato">{{
+            candidato.nome
+          }}</mat-option>
+        </mat-select>
+        <mat-label> <mat-icon>how_to_reg</mat-icon> Candidato</mat-label>
+      </mat-form-field>
+      <mat-form-field class="col-md-6">
+        <input matInput type="number" id="qtdColaborador" formControlName="qtdColaborador" />
+        <mat-label> <mat-icon>wc</mat-icon> Quantidade de Take.Seres</mat-label>
+      </mat-form-field>
+    </div>
+
+    <div mat-dialog-actions>
+      <button mat-raised-button class="float-right ml-3" (click)="saveSchedule()" color="primary">
+        Salvar
+      </button>
+      <button mat-raised-button class="float-right" (click)="resetForm(); schedulingModal.close()">Fechar</button>
     </div>
   </form>
 </ngx-smart-modal>

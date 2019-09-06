@@ -10,6 +10,8 @@ import { CidadeService } from '@app/services/cidade.service';
 import { CandidatoService } from '@app/services/candidato.service';
 import { takeUntil, finalize } from 'rxjs/operators';
 import { formatDate } from '@angular/common';
+import { AgendamentoService } from '@app/services/agendamento.service';
+import { Agendamento } from '@app/models/Agendamento';
 
 export interface PeriodicElement {
   name: string;
@@ -26,10 +28,15 @@ export interface PeriodicElement {
 export class CandidateComponent implements OnInit, OnDestroy {
   unsub = new Subject();
   candidateForm: FormGroup;
+  schedulingForm: FormGroup;
+
+  // datemask = [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/];
+  hourMask = [/\d/, /\d/, ':', /\d/, /\d/];
 
   loadingArea = false;
   loadingCidade = false;
   loadingCandidato = false;
+  loadingAgendamento = false;
 
   titleForm: string;
   textForm: string;
@@ -45,7 +52,8 @@ export class CandidateComponent implements OnInit, OnDestroy {
     private ngxSmartModalService: NgxSmartModalService,
     private areaService: AreaService,
     private cidadeService: CidadeService,
-    private candidatoService: CandidatoService
+    private candidatoService: CandidatoService,
+    private agendamentoService: AgendamentoService
   ) {
     this.createForm();
   }
@@ -133,7 +141,14 @@ export class CandidateComponent implements OnInit, OnDestroy {
       idCidade: [null, Validators.required],
       idArea: [null, Validators.required],
       nome: [null, Validators.required],
-      dataEntrevista: [null, Validators.required]
+      dataEntrevista: [null, Validators.required],
+      horario: [null, Validators.required]
+    });
+
+    this.schedulingForm = this.formBuilder.group({
+      idAgendamento: [null, Validators.required],
+      idCandidato: [0, Validators.required],
+      qtdColaborador: [, Validators.required]
     });
   }
 
@@ -141,6 +156,11 @@ export class CandidateComponent implements OnInit, OnDestroy {
     this.candidateForm.reset();
     Object.keys(this.candidateForm.controls).forEach(key => {
       this.candidateForm.controls[key].setErrors(null);
+    });
+
+    this.schedulingForm.reset();
+    Object.keys(this.schedulingForm.controls).forEach(key => {
+      this.schedulingForm.controls[key].setErrors(null);
     });
   }
 
@@ -152,6 +172,12 @@ export class CandidateComponent implements OnInit, OnDestroy {
         } else {
           this.candidateForm.controls[key].patchValue(data[key]);
         }
+      }
+    });
+
+    Object.keys(this.schedulingForm.controls).forEach(key => {
+      if (this.schedulingForm.controls[key]) {
+        this.schedulingForm.controls[key].patchValue(data[key]);
       }
     });
   }
@@ -211,5 +237,35 @@ export class CandidateComponent implements OnInit, OnDestroy {
         },
         err => {}
       );
+  }
+
+  addSchedule() {
+    this.schedulingForm.controls.idAgendamento.patchValue(0);
+    this.titleForm = 'Marcar Entrevista';
+    this.textForm = 'Marque suas entrevistas para os Take.Seres receberem a mensagem de confirmação no WorkChat.';
+    this.ngxSmartModalService.getModal('schedulingModal').open();
+  }
+
+  saveSchedule() {
+    if (this.schedulingForm.invalid) {
+    } else {
+      const data: Agendamento = this.schedulingForm.value;
+      this.loadingAgendamento = true;
+      this.agendamentoService
+        .saveAgendamento(data)
+        .pipe(
+          takeUntil(this.unsub),
+          finalize(() => {
+            this.loadingAgendamento = false;
+          })
+        )
+        .subscribe(
+          res => {
+            this.resetForm();
+            this.ngxSmartModalService.getModal('schedulingModal').close();
+          },
+          err => {}
+        );
+    }
   }
 }

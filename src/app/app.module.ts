@@ -25,6 +25,8 @@ import { CandidatoService } from './services/candidato.service';
 import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
+import { InterviewModule } from './interview/interview.module';
+import { AgendamentoService } from './services/agendamento.service';
 
 registerLocaleData(localePt);
 
@@ -42,6 +44,7 @@ registerLocaleData(localePt);
     ShellModule,
     ColaboratorModule,
     CandidateModule,
+    InterviewModule,
     LoginModule,
     AppRoutingModule // must be imported as the last module as it contains the fallback route
   ],
@@ -51,6 +54,7 @@ registerLocaleData(localePt);
     CidadeService,
     ColaboradorService,
     CandidatoService,
+    AgendamentoService,
     { provide: LOCALE_ID, useValue: 'pt-BR' }
   ],
   bootstrap: [AppComponent]

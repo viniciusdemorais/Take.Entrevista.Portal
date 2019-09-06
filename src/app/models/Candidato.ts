@@ -4,4 +4,5 @@ export interface Candidato {
   idArea?: number;
   nome?: string;
   dataEntrevista?: Date;
+  horario?: Date;
 }

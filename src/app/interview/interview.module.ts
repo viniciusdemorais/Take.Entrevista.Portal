@@ -4,13 +4,12 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { CoreModule } from '@app/core';
 import { SharedModule } from '@app/shared';
-import { CandidateRoutingModule } from './candidate-routing.module';
-import { CandidateComponent } from './candidate.component';
+import { InterviewRoutingModule } from './interview-routing.module';
+import { InterviewComponent } from './interview.component';
 import { MaterialModule } from '@app/shared/material/material-components.module';
 
 import { NgxSmartModalModule } from 'ngx-smart-modal';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TextMaskModule } from 'angular2-text-mask';
 
 @NgModule({
   imports: [
@@ -20,11 +19,10 @@ import { TextMaskModule } from 'angular2-text-mask';
     ReactiveFormsModule,
     CoreModule,
     SharedModule,
-    TextMaskModule,
     MaterialModule,
     NgxSmartModalModule.forRoot(),
-    CandidateRoutingModule
+    InterviewRoutingModule
   ],
-  declarations: [CandidateComponent]
+  declarations: [InterviewComponent]
 })
-export class CandidateModule {}
+export class InterviewModule {}
