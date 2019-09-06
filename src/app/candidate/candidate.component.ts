@@ -12,6 +12,8 @@ import { takeUntil, finalize } from 'rxjs/operators';
 import { formatDate } from '@angular/common';
 import { AgendamentoService } from '@app/services/agendamento.service';
 import { Agendamento } from '@app/models/Agendamento';
+import { Colaborador } from '@app/models/Colaborador';
+import { ColaboradorService } from '@app/services/colaborador.service';
 
 export interface PeriodicElement {
   name: string;
@@ -37,6 +39,7 @@ export class CandidateComponent implements OnInit, OnDestroy {
   loadingCidade = false;
   loadingCandidato = false;
   loadingAgendamento = false;
+  loadingColaboradoresRh = false;
 
   titleForm: string;
   textForm: string;
@@ -46,6 +49,7 @@ export class CandidateComponent implements OnInit, OnDestroy {
   areas: Area[] = [];
   cidades: Cidade[] = [];
   candidatos: Candidato[] = [];
+  colaboradoresRh: Colaborador[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -53,7 +57,8 @@ export class CandidateComponent implements OnInit, OnDestroy {
     private areaService: AreaService,
     private cidadeService: CidadeService,
     private candidatoService: CandidatoService,
-    private agendamentoService: AgendamentoService
+    private agendamentoService: AgendamentoService,
+    private colaboradorService: ColaboradorService
   ) {
     this.createForm();
   }
@@ -62,6 +67,7 @@ export class CandidateComponent implements OnInit, OnDestroy {
     this.getAreas();
     this.getCidades();
     this.getCandidatos();
+    this.getColaboradoresRh();
   }
 
   ngOnDestroy() {
@@ -135,6 +141,24 @@ export class CandidateComponent implements OnInit, OnDestroy {
       );
   }
 
+  getColaboradoresRh() {
+    this.loadingColaboradoresRh = true;
+    this.colaboradorService
+      .retrieveColaboradoresRh()
+      .pipe(
+        takeUntil(this.unsub),
+        finalize(() => {
+          this.loadingColaboradoresRh = false;
+        })
+      )
+      .subscribe(
+        res => {
+          this.colaboradoresRh = res.list;
+        },
+        err => {}
+      );
+  }
+
   createForm() {
     this.candidateForm = this.formBuilder.group({
       idCandidato: [0, Validators.required],
@@ -147,7 +171,8 @@ export class CandidateComponent implements OnInit, OnDestroy {
 
     this.schedulingForm = this.formBuilder.group({
       idAgendamento: [null, Validators.required],
-      idCandidato: [0, Validators.required],
+      idCandidato: [, Validators.required],
+      responsavelRh: [, Validators.required],
       qtdColaborador: [, Validators.required]
     });
   }

@@ -18,7 +18,8 @@ import {
   MatDialogModule,
   MatSelectModule,
   MatOptionModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatSlideToggleModule
 } from '@angular/material';
 
 const modules = [
@@ -39,7 +40,8 @@ const modules = [
   MatDialogModule,
   MatSelectModule,
   MatOptionModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatSlideToggleModule
 ];
 
 export const MY_FORMATS = {

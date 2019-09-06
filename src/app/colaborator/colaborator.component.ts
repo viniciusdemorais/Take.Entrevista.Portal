@@ -126,7 +126,8 @@ export class ColaboratorComponent implements OnInit, OnDestroy {
       idArea: [null, Validators.required],
       nome: [null, Validators.required],
       email: [null, Validators.required],
-      workChatId: [null, Validators.required]
+      workChatId: [null, Validators.required],
+      rh: [0, Validators.required]
     });
   }
 

@@ -121,8 +121,16 @@
         <mat-label> <mat-icon>how_to_reg</mat-icon> Candidato</mat-label>
       </mat-form-field>
       <mat-form-field class="col-md-6">
-        <input matInput type="number" id="qtdColaborador" formControlName="qtdColaborador" />
+        <input matInput type="number" id="qtdColaborador" formControlName="qtdColaborador" required />
         <mat-label> <mat-icon>wc</mat-icon> Quantidade de Take.Seres</mat-label>
+      </mat-form-field>
+      <mat-form-field class="col-md-6">
+        <mat-select formControlName="responsavelRh" id="responsavelRh" required>
+          <mat-option *ngFor="let colaborador of colaboradoresRh" [value]="colaborador.idColaborador">{{
+            colaborador.nome
+          }}</mat-option>
+        </mat-select>
+        <mat-label> <mat-icon>flag</mat-icon> Responsável do RH</mat-label>
       </mat-form-field>
     </div>
 
